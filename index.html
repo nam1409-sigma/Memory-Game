@@ -9,29 +9,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
 <style>
-  /* ============================================================
-     CSS CUSTOM PROPERTIES — Tweak the look here
-  ============================================================ */
   :root {
-    --bg-deep:    #0a0c1a;
-    --bg-mid:     #10132a;
-    --glass:      rgba(255,255,255,0.06);
+    --bg-deep:      #0a0c1a;
+    --glass:        rgba(255,255,255,0.06);
     --glass-border: rgba(255,255,255,0.12);
-    --neon-a:     #6c63ff;   /* purple */
-    --neon-b:     #00d4ff;   /* cyan   */
-    --neon-c:     #ff6bcb;   /* pink   */
-    --gold:       #ffd86b;
-    --text:       #e8eaf6;
-    --text-dim:   #7b82b4;
-    --card-back:  #1c1f3a;
-    --card-radius: 16px;
-    --flip-dur:   0.55s;
+    --neon-a:       #6c63ff;
+    --neon-b:       #00d4ff;
+    --neon-c:       #ff6bcb;
+    --gold:         #ffd86b;
+    --text:         #e8eaf6;
+    --text-dim:     #7b82b4;
+    --card-back:    #1c1f3a;
+    --card-radius:  clamp(10px, 2vw, 16px);
+    --flip-dur:     0.55s;
+    --gap:          clamp(6px, 1.5vw, 14px);
   }
 
-  /* ============================================================
-     RESET & BASE
-  ============================================================ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -40,264 +36,208 @@
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Animated starfield background */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background:
       radial-gradient(ellipse 80% 60% at 20% 10%, rgba(108,99,255,0.18) 0%, transparent 70%),
       radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,212,255,0.14) 0%, transparent 70%),
       radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,107,203,0.08) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
-  /* Floating orbs */
   .orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.25;
-    pointer-events: none;
-    z-index: 0;
+    position: fixed; border-radius: 50%; filter: blur(80px);
+    opacity: 0.22; pointer-events: none; z-index: 0;
     animation: orb-drift 12s ease-in-out infinite alternate;
   }
-  .orb-1 { width: 400px; height: 400px; background: var(--neon-a); top: -100px; left: -100px; animation-delay: 0s; }
-  .orb-2 { width: 300px; height: 300px; background: var(--neon-b); bottom: -80px; right: -80px; animation-delay: -4s; }
-  .orb-3 { width: 250px; height: 250px; background: var(--neon-c); top: 40%; left: 60%; animation-delay: -8s; }
-
+  .orb-1 { width:400px; height:400px; background:var(--neon-a); top:-100px;  left:-100px; }
+  .orb-2 { width:300px; height:300px; background:var(--neon-b); bottom:-80px; right:-80px; animation-delay:-4s; }
+  .orb-3 { width:250px; height:250px; background:var(--neon-c); top:40%;     left:60%;    animation-delay:-8s; }
   @keyframes orb-drift {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(40px, 30px) scale(1.1); }
+    from { transform:translate(0,0) scale(1); }
+    to   { transform:translate(40px,30px) scale(1.1); }
   }
 
   /* ============================================================
-     LAYOUT WRAPPER
+     WRAPPER
   ============================================================ */
   .wrapper {
-    position: relative;
-    z-index: 1;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 16px 16px 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
+    position: relative; z-index: 1;
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: clamp(10px, 2vh, 20px);
+    padding: clamp(10px,2vw,20px) clamp(10px,3vw,24px);
+    width: 100%;
   }
 
   /* ============================================================
-     HUD — score / moves / controls
+     HUD
   ============================================================ */
   .hud {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    gap: clamp(6px,1.5vw,10px); flex-wrap: wrap;
+    width: 100%; max-width: 700px;
   }
 
   .stat-card {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(12px);
-    border-radius: 14px;
-    padding: 12px 22px;
+    border-radius: clamp(10px,2vw,14px);
+    padding: clamp(8px,1.5vw,12px) clamp(10px,2vw,20px);
     text-align: center;
-    min-width: 100px;
+    min-width: clamp(64px,13vw,100px);
+    flex: 1; max-width: 130px;
     transition: transform 0.2s;
   }
   .stat-card:hover { transform: translateY(-2px); }
+  .stat-card.record-card { border-color:rgba(255,216,107,0.35); background:rgba(255,216,107,0.07); }
+  .stat-card.wins-card   { border-color:rgba(108,99,255,0.35);  background:rgba(108,99,255,0.07); }
 
   .stat-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 2px;
+    font-size: clamp(8px,1.4vw,10px);
+    font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text-dim);
+    margin-bottom: 2px; white-space: nowrap;
   }
 
   .stat-value {
     font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1;
+    font-size: clamp(18px,3.5vw,26px);
+    font-weight: 800; line-height: 1;
+    transition: transform 0.15s;
   }
-
   .stat-value.matches { color: var(--neon-b); }
   .stat-value.moves   { color: var(--neon-c); }
+  .stat-value.record  { color: var(--gold); }
+  .stat-value.wins    { color: var(--neon-a); }
+
+  @keyframes new-record {
+    0%  { transform:scale(1); }
+    40% { transform:scale(1.6); filter:brightness(1.8); }
+    100%{ transform:scale(1); }
+  }
+  .stat-value.record.flash { animation: new-record 0.65s ease-out; }
 
   .hud-controls {
-    display: flex;
-    gap: 10px;
-    flex-shrink: 0;
+    display: flex; gap: clamp(6px,1.5vw,10px); flex-shrink: 0;
   }
 
   .btn {
     font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 20px;
+    font-size: clamp(11px,2vw,13px);
+    font-weight: 700; letter-spacing: 0.5px;
+    border: none; border-radius: clamp(8px,2vw,12px);
+    padding: clamp(9px,1.5vw,12px) clamp(10px,2.5vw,18px);
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
-    outline: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    outline: none; display: inline-flex; align-items: center; gap: 5px;
+    white-space: nowrap;
   }
   .btn:active { transform: scale(0.95); }
 
   .btn-restart {
     background: linear-gradient(135deg, var(--neon-a), #9b72ff);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(108,99,255,0.45);
+    color: #fff; box-shadow: 0 4px 20px rgba(108,99,255,0.45);
   }
-  .btn-restart:hover { box-shadow: 0 6px 28px rgba(108,99,255,0.65); transform: translateY(-2px); }
+  .btn-restart:hover { box-shadow:0 6px 28px rgba(108,99,255,0.65); transform:translateY(-2px); }
 
   .btn-mute {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    color: var(--text);
-    backdrop-filter: blur(8px);
-    font-size: 18px;
-    padding: 10px 14px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    color: var(--text); backdrop-filter: blur(8px);
+    font-size: clamp(14px,2.8vw,18px);
+    padding: clamp(7px,1.2vw,10px) clamp(9px,1.8vw,14px);
   }
-  .btn-mute:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  .btn-mute:hover { background:rgba(255,255,255,0.1); transform:translateY(-2px); }
   .btn-mute.muted { color: var(--text-dim); }
 
   /* ============================================================
      CARD GRID
   ============================================================ */
-  .grid {
-    display: grid;
-    /* Default 4×4; JS will update grid-template-columns if size changes */
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    width: 100%;
-    max-width: 680px;
+  .grid-wrap {
+    width: 100%; max-width: 700px;
+    display: flex; align-items: center; justify-content: center;
   }
 
-  /* ---- Card Shell ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap);
+    width: 100%;
+  }
+
   .card {
     aspect-ratio: 3/4;
     perspective: 900px;
-    cursor: pointer;
-    user-select: none;
+    cursor: pointer; user-select: none;
   }
 
   .card-inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform var(--flip-dur) cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%; height: 100%;
+    position: relative; transform-style: preserve-3d;
+    transition: transform var(--flip-dur) cubic-bezier(0.4,0,0.2,1);
     border-radius: var(--card-radius);
   }
+  .card.flipped .card-inner,
+  .card.matched .card-inner { transform: rotateY(180deg); }
 
-  .card.flipped .card-inner   { transform: rotateY(180deg); }
-  .card.matched .card-inner   { transform: rotateY(180deg); }
-
-  /* Matched glow pulse */
-  .card.matched .card-face-front {
-    box-shadow: 0 0 0 2px var(--neon-b), 0 0 24px rgba(0,212,255,0.5);
-    animation: match-pulse 1.6s ease-in-out infinite;
-  }
+  .card.matched .card-face-front { animation: match-pulse 1.6s ease-in-out infinite; }
   @keyframes match-pulse {
-    0%, 100% { box-shadow: 0 0 0 2px var(--neon-b), 0 0 18px rgba(0,212,255,0.4); }
-    50%       { box-shadow: 0 0 0 3px var(--neon-b), 0 0 36px rgba(0,212,255,0.7); }
+    0%,100% { box-shadow:0 0 0 2px var(--neon-b),0 0 18px rgba(0,212,255,0.4); }
+    50%     { box-shadow:0 0 0 3px var(--neon-b),0 0 36px rgba(0,212,255,0.7); }
   }
 
-  /* Shared face styles */
   .card-face-front,
   .card-face-back {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     border-radius: var(--card-radius);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
     overflow: hidden;
   }
 
-  /* ---- BACK FACE ---- */
   .card-face-back {
-    background: var(--card-back);
-    border: 1px solid var(--glass-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.15s;
+    background: var(--card-back); border: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s;
   }
   .card:not(.flipped):not(.matched):hover .card-face-back {
-    transform: scale(1.03);
-    border-color: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.25);
   }
-
-  /* Decorative back pattern */
   .card-face-back::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background:
-      repeating-linear-gradient(
-        45deg,
-        rgba(108,99,255,0.08) 0px,
-        rgba(108,99,255,0.08) 1px,
-        transparent 1px,
-        transparent 18px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        rgba(0,212,255,0.06) 0px,
-        rgba(0,212,255,0.06) 1px,
-        transparent 1px,
-        transparent 18px
-      );
+      repeating-linear-gradient(45deg,  rgba(108,99,255,0.08) 0px,rgba(108,99,255,0.08) 1px,transparent 1px,transparent 18px),
+      repeating-linear-gradient(-45deg, rgba(0,212,255,0.06)  0px,rgba(0,212,255,0.06)  1px,transparent 1px,transparent 18px);
   }
-
   .card-back-symbol {
-    font-size: clamp(22px, 5vw, 36px);
-    z-index: 1;
-    filter: drop-shadow(0 0 10px rgba(108,99,255,0.7));
+    font-size: clamp(16px,3.5vw,32px); z-index: 1;
+    filter: drop-shadow(0 0 8px rgba(108,99,255,0.7));
     animation: float-symbol 3s ease-in-out infinite;
   }
   @keyframes float-symbol {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-4px); }
+    0%,100% { transform:translateY(0); }
+    50%     { transform:translateY(-4px); }
   }
 
-  /* ---- FRONT FACE ---- */
   .card-face-front {
     transform: rotateY(180deg);
-    background: linear-gradient(135deg, #1e2148 0%, #161933 100%);
+    background: linear-gradient(135deg,#1e2148 0%,#161933 100%);
     border: 1px solid rgba(255,255,255,0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 6px;
-    padding: 8px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4px;
   }
-
-  /* Image cards */
   .card-face-front img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: calc(var(--card-radius) - 4px);
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: calc(var(--card-radius) - 3px);
   }
-
-  /* Emoji cards */
   .card-emoji {
-    font-size: clamp(28px, 7vw, 52px);
-    line-height: 1;
+    font-size: clamp(20px,5.5vw,52px); line-height: 1;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
   }
 
@@ -305,127 +245,118 @@
      VICTORY MODAL
   ============================================================ */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(8, 10, 26, 0.85);
-    backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
+    position: fixed; inset: 0;
+    background: rgba(8,10,26,0.85); backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease; padding: 16px;
   }
-  .modal-overlay.visible {
-    opacity: 1;
-    pointer-events: all;
-  }
+  .modal-overlay.visible { opacity:1; pointer-events:all; }
 
   .modal {
-    background: linear-gradient(160deg, #1a1e3a 0%, #0f1225 100%);
+    background: linear-gradient(160deg,#1a1e3a 0%,#0f1225 100%);
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 28px;
-    padding: 44px 40px;
-    text-align: center;
-    max-width: 420px;
-    width: 90%;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    padding: clamp(22px,5vw,44px) clamp(18px,5vw,40px);
+    text-align: center; max-width: 460px; width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
     transform: scale(0.85) translateY(24px);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
   }
   .modal-overlay.visible .modal { transform: scale(1) translateY(0); }
 
   .modal-trophy {
-    font-size: 64px;
-    margin-bottom: 16px;
-    display: block;
+    font-size: clamp(40px,10vw,64px); margin-bottom: 12px; display: block;
     animation: trophy-bounce 1.2s ease-in-out infinite;
   }
   @keyframes trophy-bounce {
-    0%, 100% { transform: translateY(0) rotate(-3deg); }
-    50%       { transform: translateY(-10px) rotate(3deg); }
+    0%,100% { transform:translateY(0) rotate(-3deg); }
+    50%     { transform:translateY(-10px) rotate(3deg); }
   }
 
   .modal h2 {
     font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
+    font-size: clamp(1.4rem,5vw,2rem); font-weight: 800;
     background: linear-gradient(135deg, var(--gold), var(--neon-c));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 6px;
   }
 
   .modal-sub {
-    color: var(--text-dim);
-    font-size: 15px;
-    margin-bottom: 28px;
+    color: var(--text-dim); font-size: clamp(12px,2.5vw,15px);
+    margin-bottom: 16px;
+  }
+
+  .new-record-badge {
+    display: none;
+    background: linear-gradient(135deg, var(--gold), #ffaa00);
+    color: #1a1200; font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 100px;
+    padding: 5px 16px; margin: 0 auto 18px; width: fit-content;
+    animation: badge-pop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .new-record-badge.show { display: block; }
+  @keyframes badge-pop {
+    from { transform:scale(0.5); opacity:0; }
+    to   { transform:scale(1);   opacity:1; }
   }
 
   .modal-stats {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px; margin-bottom: 22px;
   }
 
   .modal-stat {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px;
-    padding: 16px 24px;
-    flex: 1;
+    padding: clamp(10px,2vw,16px) clamp(8px,2vw,20px);
   }
-  .modal-stat .stat-label { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); }
-  .modal-stat .stat-value { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; }
+  .modal-stat.hl-gold   { border-color:rgba(255,216,107,0.4); background:rgba(255,216,107,0.08); }
+  .modal-stat.hl-purple { border-color:rgba(108,99,255,0.4);  background:rgba(108,99,255,0.08); }
+
+  .modal-stat .stat-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); margin-bottom:4px; }
+  .modal-stat .stat-value { font-family:'Syne',sans-serif; font-size:clamp(20px,5vw,30px); font-weight:800; }
 
   .btn-play-again {
     background: linear-gradient(135deg, var(--neon-b), var(--neon-a));
-    color: #fff;
-    font-size: 16px;
-    padding: 16px 40px;
-    border-radius: 16px;
+    color: #fff; font-size: clamp(13px,2.5vw,16px);
+    padding: clamp(12px,2.5vw,16px) 40px; border-radius: 16px;
     box-shadow: 0 6px 28px rgba(0,212,255,0.4);
-    width: 100%;
-    justify-content: center;
-    letter-spacing: 1px;
+    width: 100%; justify-content: center; letter-spacing: 1px;
   }
-  .btn-play-again:hover {
-    box-shadow: 0 8px 36px rgba(0,212,255,0.6);
-    transform: translateY(-3px);
-  }
+  .btn-play-again:hover { box-shadow:0 8px 36px rgba(0,212,255,0.6); transform:translateY(-3px); }
 
-  /* Confetti canvas */
-  #confetti-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 99;
-  }
+  #confetti-canvas { position:fixed; inset:0; pointer-events:none; z-index:99; }
 
   /* ============================================================
      RESPONSIVE
   ============================================================ */
-  @media (max-width: 500px) {
-    .grid { gap: 10px; }
-    .hud { gap: 8px; }
-    .stat-card { padding: 10px 14px; min-width: 80px; }
-    .stat-value { font-size: 22px; }
-    .modal { padding: 32px 24px; }
+  /* Small phones */
+  @media (max-width: 480px) {
+    .wrapper { justify-content: flex-start; padding-top: 12px; }
+    .stat-card { max-width: none; padding: 7px 10px; }
+    .btn { padding: 8px 11px; }
+    .modal-stats { grid-template-columns: repeat(2,1fr); }
+  }
+  /* Very small */
+  @media (max-width: 360px) {
+    .stat-label { letter-spacing: 0.8px; }
+    .hud-controls .btn-restart .btn-label { display: none; }
+  }
+  /* Desktop — cap grid width so cards don't get too large */
+  @media (min-width: 900px) {
+    .grid-wrap { max-width: 640px; }
   }
 </style>
 </head>
-
 <body>
 
-<!-- Decorative background orbs -->
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
-
-<!-- Confetti canvas (shown on victory) -->
 <canvas id="confetti-canvas"></canvas>
 
 <!-- Victory Modal -->
@@ -433,27 +364,33 @@
   <div class="modal">
     <span class="modal-trophy" role="img" aria-label="Trophy">🏆</span>
     <h2 id="modalTitle">You Won!</h2>
-    <p class="modal-sub">All pairs matched. Brilliant memory!</p>
+    <p class="modal-sub" id="modalSub">All pairs matched. Brilliant memory!</p>
+    <div class="new-record-badge" id="newRecordBadge">🏅 New Record!</div>
     <div class="modal-stats">
       <div class="modal-stat">
-        <div class="stat-label">MATCHES</div>
-        <div class="stat-value matches" id="modalMatches">0</div>
+        <div class="stat-label">Moves This Game</div>
+        <div class="stat-value moves" id="modalMoves">0</div>
+      </div>
+      <div class="modal-stat hl-gold">
+        <div class="stat-label">Best Record</div>
+        <div class="stat-value record" id="modalRecord">—</div>
+      </div>
+      <div class="modal-stat hl-purple">
+        <div class="stat-label">Total Wins</div>
+        <div class="stat-value wins" id="modalWins">0</div>
       </div>
       <div class="modal-stat">
-        <div class="stat-label">MOVES</div>
-        <div class="stat-value moves" id="modalMoves">0</div>
+        <div class="stat-label">Pairs Found</div>
+        <div class="stat-value matches" id="modalMatches">0</div>
       </div>
     </div>
     <button class="btn btn-play-again" id="btnPlayAgain">🔄 Play Again</button>
   </div>
 </div>
 
-<!-- ============================================================
-     MAIN WRAPPER
-============================================================ -->
+<!-- Main -->
 <div class="wrapper">
 
-  <!-- HUD -->
   <div class="hud">
     <div class="stat-card">
       <div class="stat-label">Matches</div>
@@ -463,156 +400,125 @@
       <div class="stat-label">Moves</div>
       <div class="stat-value moves" id="moveCount">0</div>
     </div>
+    <div class="stat-card record-card">
+      <div class="stat-label">Best</div>
+      <div class="stat-value record" id="recordDisplay">—</div>
+    </div>
+    <div class="stat-card wins-card">
+      <div class="stat-label">Wins</div>
+      <div class="stat-value wins" id="winsDisplay">0</div>
+    </div>
     <div class="hud-controls">
-      <button class="btn btn-restart" id="btnRestart" aria-label="Restart game">↺ Restart</button>
+      <button class="btn btn-restart" id="btnRestart" aria-label="Restart game">
+        ↺ <span class="btn-label">Restart</span>
+      </button>
       <button class="btn btn-mute" id="btnMute" aria-label="Toggle sound">🔊</button>
     </div>
   </div>
 
-  <!-- Card Grid -->
-  <div class="grid" id="cardGrid" role="list" aria-label="Memory card grid"></div>
+  <div class="grid-wrap">
+    <div class="grid" id="cardGrid" role="list" aria-label="Memory card grid"></div>
+  </div>
 
-
-
-</div><!-- /.wrapper -->
-
+</div>
 
 <script>
 /* ============================================================
-   ██████████████████████████████████████████████████████████
-   █                                                        █
-   █   GAME ASSETS — Edit this object to customize!        █
-   █                                                        █
-   ██████████████████████████████████████████████████████████
-
-   images  : 8 entries (emoji or image URL). One per pair.
-   sounds  : URLs to audio files, or null to silence.
-   totalPairs: must match the number of images you provide.
+   GAME ASSETS
 ============================================================ */
 const gameAssets = {
-
-  /* --- Card images (emoji or URL) ---
-     Replace with your own URLs like:
-     "https://picsum.photos/seed/cat/200/260"
-     or local paths: "./img/cat.jpg"                       */
   images: [
-    "da.jpg",    // pair 1
-    "hieu.jpg",  // pair 2
-    "kp.jpg",    // pair 3
-    "mh.jpg",    // pair 4
-    "phuc.jpg",  // pair 5
-    "qduc.jpg",  // pair 6
-    "qh.jpg",    // pair 7
-    "tung.jpg",  // pair 8
+    "da.jpg",
+    "hieu.jpg",
+    "kp.jpg",
+    "mh.jpg",
+    "phuc.jpg",
+    "qduc.jpg",
+    "qh.jpg",
+    "tung.jpg",
   ],
-
-  /* --- Sounds ---
-     Replace null with a URL or file path to enable audio.
-     Example: flip: "./sounds/flip.mp3"
-     The game uses Web Audio API beeps as built-in fallback. */
   sounds: {
-    flip:      null,   // ← replace with your flip sound URL
-    match:     null,   // ← replace with your match sound URL
-    mismatch:  null,   // ← replace with your mismatch sound URL
+    flip:     null,
+    match:    null,
+    mismatch: null,
   },
-
-  /* --- Grid size ---
-     Must equal gameAssets.images.length (at minimum).
-     Also update CSS .grid → grid-template-columns if columns change. */
   totalPairs: 8,
 };
 
 /* ============================================================
-   AUDIO ENGINE — Web Audio API fallback beeps
+   PERSISTENT STATS
+============================================================ */
+function loadStats() {
+  return {
+    record: parseInt(localStorage.getItem('memoryRecord') || '0', 10),
+    wins:   parseInt(localStorage.getItem('memoryWins')   || '0', 10),
+  };
+}
+function saveStats(s) {
+  localStorage.setItem('memoryRecord', s.record);
+  localStorage.setItem('memoryWins',   s.wins);
+}
+
+/* ============================================================
+   AUDIO
 ============================================================ */
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 let isMuted = localStorage.getItem('memoryMuted') === 'true';
 
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-  return audioCtx;
-}
-
-/* Play a beep using Web Audio API */
-function playBeep(frequency, duration, type = 'sine', gain = 0.18) {
+function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+function playBeep(freq, dur, type='sine', gain=0.18) {
   if (isMuted) return;
   try {
-    const ctx = getAudioCtx();
-    const osc = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    osc.type = type;
-    osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-    gainNode.gain.setValueAtTime(gain, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-  } catch(e) { /* audio not supported */ }
+    const ctx=getAudioCtx(), osc=ctx.createOscillator(), g=ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type=type; osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    g.gain.setValueAtTime(gain,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+dur);
+  } catch(e) {}
 }
-
-/* Play from URL or fallback to beep */
 function playSound(key) {
   if (isMuted) return;
   const url = gameAssets.sounds[key];
-  if (url) {
-    const audio = new Audio(url);
-    audio.play().catch(() => {});
-  } else {
-    // Built-in beeps
-    if (key === 'flip')     playBeep(520,  0.12, 'sine',     0.14);
-    if (key === 'match')    { playBeep(660, 0.1, 'triangle', 0.16); setTimeout(()=>playBeep(880,0.18,'triangle',0.16),110); }
-    if (key === 'mismatch') playBeep(220, 0.25, 'sawtooth', 0.12);
-  }
+  if (url) { const a=new Audio(url); a.play().catch(()=>{}); return; }
+  if (key==='flip')     playBeep(520,0.12,'sine',0.14);
+  if (key==='match')    { playBeep(660,0.1,'triangle',0.16); setTimeout(()=>playBeep(880,0.18,'triangle',0.16),110); }
+  if (key==='mismatch') playBeep(220,0.25,'sawtooth',0.12);
 }
 
 /* ============================================================
    GAME STATE
 ============================================================ */
-let cards         = [];    // DOM card elements
-let flippedCards  = [];    // currently face-up (unmatched)
-let matchCount    = 0;
-let moveCount     = 0;
-let lockBoard     = false; // prevent clicks during check
+let cards=[], flippedCards=[], matchCount=0, moveCount=0, lockBoard=false;
 
 /* ============================================================
-   BUILD / SHUFFLE DECK
+   DECK
 ============================================================ */
-function shuffle(array) {
-  const a = [...array];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+function shuffle(arr) {
+  const a=[...arr];
+  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
-
 function buildDeck() {
-  const pairs = gameAssets.images.slice(0, gameAssets.totalPairs);
-  const doubled = [...pairs, ...pairs];
-  return shuffle(doubled);
+  const p = gameAssets.images.slice(0, gameAssets.totalPairs);
+  return shuffle([...p, ...p]);
 }
 
 /* ============================================================
-   RENDER GRID
+   RENDER
 ============================================================ */
 function renderGrid() {
   const grid = document.getElementById('cardGrid');
-  grid.innerHTML = '';
-  cards = [];
-  const deck = buildDeck();
-
-  deck.forEach((image, index) => {
+  grid.innerHTML = ''; cards = [];
+  buildDeck().forEach((image, idx) => {
     const card = document.createElement('div');
     card.classList.add('card');
-    card.setAttribute('role', 'listitem');
-    card.setAttribute('aria-label', `Card ${index + 1}, face down`);
-    card.dataset.image = image;
-    card.tabIndex = 0;
-
-    const isEmoji = !image.startsWith('http') && !image.startsWith('./') && !image.startsWith('/') && !image.endsWith('.jpg') && !image.endsWith('.png') && !image.endsWith('.webp');
-
+    card.setAttribute('role','listitem');
+    card.setAttribute('aria-label',`Card ${idx+1}, face down`);
+    card.dataset.image = image; card.tabIndex = 0;
+    const isEmoji = !image.match(/\.(jpg|jpeg|png|webp|gif|svg)$/i) &&
+                    !image.startsWith('http') && !image.startsWith('/') && !image.startsWith('.');
     card.innerHTML = `
       <div class="card-inner">
         <div class="card-face-back">
@@ -621,90 +527,63 @@ function renderGrid() {
         <div class="card-face-front">
           ${isEmoji
             ? `<span class="card-emoji" role="img" aria-label="${image}">${image}</span>`
-            : `<img src="${image}" alt="Card image" loading="lazy" />`
-          }
+            : `<img src="${image}" alt="Card image" loading="lazy"/>`}
         </div>
-      </div>
-    `;
-
+      </div>`;
     card.addEventListener('click', () => onCardClick(card));
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') onCardClick(card); });
-
-    grid.appendChild(card);
-    cards.push(card);
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') onCardClick(card); });
+    grid.appendChild(card); cards.push(card);
   });
 }
 
 /* ============================================================
-   CARD CLICK HANDLER
+   CLICK HANDLER
 ============================================================ */
 function onCardClick(card) {
-  // Guard: board locked, already matched, or already flipped
-  if (lockBoard) return;
-  if (card.classList.contains('matched')) return;
-  if (card.classList.contains('flipped')) return;
-
-  // Resume audio context on first interaction (browser policy)
+  if (lockBoard||card.classList.contains('matched')||card.classList.contains('flipped')) return;
   if (AudioCtx) getAudioCtx().resume().catch(()=>{});
-
   playSound('flip');
   card.classList.add('flipped');
-  card.setAttribute('aria-label', `Card showing ${card.dataset.image}`);
+  card.setAttribute('aria-label',`Card showing ${card.dataset.image}`);
   flippedCards.push(card);
-
-  if (flippedCards.length === 2) {
-    moveCount++;
-    updateHUD();
-    lockBoard = true;
-    checkMatch();
-  }
+  if (flippedCards.length===2) { moveCount++; updateHUD(); lockBoard=true; checkMatch(); }
 }
 
 /* ============================================================
    MATCH CHECK
 ============================================================ */
 function checkMatch() {
-  const [a, b] = flippedCards;
-  const isMatch = a.dataset.image === b.dataset.image;
-
-  if (isMatch) {
+  const [a,b] = flippedCards;
+  if (a.dataset.image===b.dataset.image) {
     playSound('match');
-    a.classList.add('matched');
-    b.classList.add('matched');
-    a.setAttribute('aria-label', `Matched: ${a.dataset.image}`);
-    b.setAttribute('aria-label', `Matched: ${b.dataset.image}`);
-    matchCount++;
-    updateHUD();
-    flippedCards = [];
-    lockBoard = false;
-
-    if (matchCount === gameAssets.totalPairs) {
-      setTimeout(showVictory, 500);
-    }
+    a.classList.add('matched'); b.classList.add('matched');
+    a.setAttribute('aria-label',`Matched: ${a.dataset.image}`);
+    b.setAttribute('aria-label',`Matched: ${b.dataset.image}`);
+    matchCount++; updateHUD(); flippedCards=[]; lockBoard=false;
+    if (matchCount===gameAssets.totalPairs) setTimeout(showVictory,500);
   } else {
     playSound('mismatch');
-    setTimeout(() => {
-      a.classList.remove('flipped');
-      b.classList.remove('flipped');
-      a.setAttribute('aria-label', 'Card face down');
-      b.setAttribute('aria-label', 'Card face down');
-      flippedCards = [];
-      lockBoard = false;
-    }, 820);
+    setTimeout(()=>{
+      a.classList.remove('flipped'); b.classList.remove('flipped');
+      a.setAttribute('aria-label','Card face down'); b.setAttribute('aria-label','Card face down');
+      flippedCards=[]; lockBoard=false;
+    },820);
   }
 }
 
 /* ============================================================
-   HUD UPDATE
+   HUD
 ============================================================ */
 function updateHUD() {
   document.getElementById('matchCount').textContent = matchCount;
   document.getElementById('moveCount').textContent  = moveCount;
-  // Animate bump
-  ['matchCount','moveCount'].forEach(id => {
-    const el = document.getElementById(id);
-    el.style.transform = 'scale(1.35)';
-    setTimeout(() => el.style.transform = 'scale(1)', 200);
+  const {record,wins} = loadStats();
+  document.getElementById('recordDisplay').textContent = record>0 ? record : '—';
+  document.getElementById('winsDisplay').textContent   = wins;
+  ['matchCount','moveCount'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.style.transform='scale(1.35)';
+    setTimeout(()=>el.style.transform='',200);
   });
 }
 
@@ -712,122 +591,112 @@ function updateHUD() {
    VICTORY
 ============================================================ */
 function showVictory() {
-  document.getElementById('modalMatches').textContent = matchCount;
+  let {record,wins} = loadStats();
+  const isNewRecord = (record===0 || moveCount<record);
+  if (isNewRecord) record = moveCount;
+  wins++;
+  saveStats({record,wins});
+
   document.getElementById('modalMoves').textContent   = moveCount;
+  document.getElementById('modalMatches').textContent = matchCount;
+  document.getElementById('modalRecord').textContent  = record;
+  document.getElementById('modalWins').textContent    = wins;
+
+  document.getElementById('newRecordBadge').classList.toggle('show', isNewRecord);
+  document.getElementById('modalSub').textContent = isNewRecord
+    ? '🎉 New personal best — amazing!'
+    : 'All pairs matched. Brilliant memory!';
+
+  // Update live HUD with new values
+  document.getElementById('recordDisplay').textContent = record;
+  document.getElementById('winsDisplay').textContent   = wins;
+
+  if (isNewRecord) {
+    const el = document.getElementById('recordDisplay');
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 700);
+  }
+
   document.getElementById('victoryModal').classList.add('visible');
   launchConfetti();
 }
-
-function hideVictory() {
-  document.getElementById('victoryModal').classList.remove('visible');
-}
+function hideVictory() { document.getElementById('victoryModal').classList.remove('visible'); }
 
 /* ============================================================
    RESTART
 ============================================================ */
 function restartGame() {
-  hideVictory();
-  stopConfetti();
-  matchCount   = 0;
-  moveCount    = 0;
-  flippedCards = [];
-  lockBoard    = false;
+  hideVictory(); stopConfetti();
+  matchCount=moveCount=0; flippedCards=[]; lockBoard=false;
   updateHUD();
-  // Animate grid out then back
-  const grid = document.getElementById('cardGrid');
-  grid.style.opacity = '0';
-  grid.style.transform = 'scale(0.95)';
-  setTimeout(() => {
+  const grid=document.getElementById('cardGrid');
+  grid.style.opacity='0'; grid.style.transform='scale(0.95)';
+  setTimeout(()=>{
     renderGrid();
-    grid.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-    grid.style.opacity = '1';
-    grid.style.transform = 'scale(1)';
-    setTimeout(() => { grid.style.transition = ''; }, 400);
-  }, 250);
+    grid.style.transition='opacity 0.35s ease,transform 0.35s ease';
+    grid.style.opacity='1'; grid.style.transform='scale(1)';
+    setTimeout(()=>{grid.style.transition='';},380);
+  },220);
 }
 
 /* ============================================================
-   MUTE TOGGLE
+   MUTE
 ============================================================ */
 function updateMuteUI() {
-  const btn = document.getElementById('btnMute');
-  btn.textContent = isMuted ? '🔇' : '🔊';
-  btn.classList.toggle('muted', isMuted);
-  btn.setAttribute('aria-label', isMuted ? 'Unmute sounds' : 'Mute sounds');
+  const btn=document.getElementById('btnMute');
+  btn.textContent=isMuted?'🔇':'🔊';
+  btn.classList.toggle('muted',isMuted);
+  btn.setAttribute('aria-label',isMuted?'Unmute sounds':'Mute sounds');
 }
-
-document.getElementById('btnMute').addEventListener('click', () => {
-  isMuted = !isMuted;
-  localStorage.setItem('memoryMuted', isMuted);
-  updateMuteUI();
+document.getElementById('btnMute').addEventListener('click',()=>{
+  isMuted=!isMuted; localStorage.setItem('memoryMuted',isMuted); updateMuteUI();
 });
 
 /* ============================================================
-   CONFETTI (pure canvas)
+   CONFETTI
 ============================================================ */
-let confettiRAF  = null;
-let confettiPieces = [];
-
+let confettiRAF=null, confettiPieces=[];
 function launchConfetti() {
-  const canvas = document.getElementById('confetti-canvas');
-  const W = canvas.width  = window.innerWidth;
-  const H = canvas.height = window.innerHeight;
-  const ctx = canvas.getContext('2d');
-  const colors = ['#6c63ff','#00d4ff','#ff6bcb','#ffd86b','#ff8c42','#7fff7f'];
-
-  confettiPieces = Array.from({ length: 120 }, () => ({
-    x:  Math.random() * W,
-    y:  Math.random() * H - H,
-    w:  6 + Math.random() * 8,
-    h:  4 + Math.random() * 6,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    rot: Math.random() * Math.PI * 2,
-    rotV: (Math.random() - 0.5) * 0.12,
-    vx: (Math.random() - 0.5) * 2.5,
-    vy: 2.5 + Math.random() * 3.5,
-    alpha: 1,
+  const canvas=document.getElementById('confetti-canvas');
+  const W=canvas.width=window.innerWidth, H=canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const colors=['#6c63ff','#00d4ff','#ff6bcb','#ffd86b','#ff8c42','#7fff7f'];
+  confettiPieces=Array.from({length:130},()=>({
+    x:Math.random()*W, y:Math.random()*H-H,
+    w:6+Math.random()*8, h:4+Math.random()*6,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    rot:Math.random()*Math.PI*2, rotV:(Math.random()-.5)*.12,
+    vx:(Math.random()-.5)*2.5, vy:2.5+Math.random()*3.5, alpha:1,
   }));
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    confettiPieces.forEach(p => {
-      ctx.save();
-      ctx.globalAlpha = p.alpha;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-      ctx.restore();
-      p.x   += p.vx;
-      p.y   += p.vy;
-      p.rot += p.rotV;
-      if (p.y > H * 0.7) p.alpha -= 0.015;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    confettiPieces.forEach(p=>{
+      ctx.save(); ctx.globalAlpha=p.alpha; ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV;
+      if(p.y>H*.7) p.alpha-=.015;
     });
-    confettiPieces = confettiPieces.filter(p => p.alpha > 0);
-    if (confettiPieces.length > 0) confettiRAF = requestAnimationFrame(draw);
-    else ctx.clearRect(0, 0, W, H);
-  }
-  draw();
+    confettiPieces=confettiPieces.filter(p=>p.alpha>0);
+    if(confettiPieces.length) confettiRAF=requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,W,H);
+  })();
 }
-
 function stopConfetti() {
-  if (confettiRAF) { cancelAnimationFrame(confettiRAF); confettiRAF = null; }
-  const canvas = document.getElementById('confetti-canvas');
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  if(confettiRAF){cancelAnimationFrame(confettiRAF);confettiRAF=null;}
+  const c=document.getElementById('confetti-canvas');
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
 }
-
-/* ============================================================
-   EVENT LISTENERS
-============================================================ */
-document.getElementById('btnRestart').addEventListener('click', restartGame);
-document.getElementById('btnPlayAgain').addEventListener('click', restartGame);
 
 /* ============================================================
    INIT
 ============================================================ */
+document.getElementById('btnRestart').addEventListener('click', restartGame);
+document.getElementById('btnPlayAgain').addEventListener('click', restartGame);
 updateMuteUI();
+updateHUD();
 renderGrid();
 </script>
-
 </body>
 </html>
